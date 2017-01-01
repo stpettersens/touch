@@ -38,7 +38,7 @@ task :test do
     if OS.windows? then
         sh "target\\release\\#{target}.exe foo.txt"
     else
-        sh "target/release/#{target}.exe foo.txt"
+        sh "target/release/#{target} foo.txt"
         sh "file foo.txt"
     end
 end
