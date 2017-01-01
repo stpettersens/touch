@@ -23,7 +23,7 @@ end
 
 task :clean do
     FileUtils.rm_rf("target")
-    if OS.windows? and File.exists?("#{target}.exe")
+    if OS.windows? and File.exists?("#{target}.exe") then
         File.delete("#{target}.exe")
     elsif File.exists?(target) then
         File.delete(target)
