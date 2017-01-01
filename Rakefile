@@ -36,8 +36,12 @@ end
 
 task :test do
     if OS.windows? then
+        sh "target\\release\\#{target}.exe --help"
+        puts
         sh "target\\release\\#{target}.exe foo.txt"
     else
+        sh "target/release/#{target} --help"
+        puts
         sh "target/release/#{target} foo.txt"
         sh "file foo.txt"
     end
