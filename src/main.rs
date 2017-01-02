@@ -59,7 +59,7 @@ fn touch(file: &str, create: bool, access: bool, modify: bool, rfile: String) {
             }
         }
         let fatime = FileTime::from_last_access_time(&df);
-        let fmtime = FileTime::from_last_access_time(&df);
+        let fmtime = FileTime::from_last_modification_time(&df);
         if access && !modify {
             let _ = filetime::set_file_times(file, ttime, fmtime);
         } else if modify && !access {
