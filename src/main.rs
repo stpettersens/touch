@@ -39,7 +39,7 @@ fn display_help(program: &str) {
     exit(0);
 }
 
-fn touch(file: &str, create: bool, access: bool, modify: bool, rfile: String) {
+fn touch(program: &str, file: &str, create: bool, access: bool, modify: bool, rfile: String) {
     let touchf = "__touch_file__";
     let p = Path::new(file);
     if !p.exists() && create {
@@ -50,22 +50,27 @@ fn touch(file: &str, create: bool, access: bool, modify: bool, rfile: String) {
         let _ = File::open(file);
         let dt = fs::metadata(touchf).unwrap();
         let df = fs::metadata(file).unwrap();
-        let mut ttime = FileTime::from_last_access_time(&dt);
+        let mut tatime = FileTime::from_last_access_time(&dt);
+        let mut tmtime = FileTime::from_last_modification_time(&dt);
         if !rfile.is_empty() {
             let rp = Path::new(&rfile);
             if rp.exists() {
-                let rf = fs::metadata(&rfile).unwrap();
-                ttime = FileTime::from_last_access_time(&rf);
+                let drf = fs::metadata(&rfile).unwrap();
+                tatime = FileTime::from_last_access_time(&drf);
+                tmtime = FileTime::from_last_modification_time(&drf);
+            } else {
+                let _ = fs::remove_file(touchf);
+                display_error(program, "cannot access reference file");
             }
         }
         let fatime = FileTime::from_last_access_time(&df);
         let fmtime = FileTime::from_last_modification_time(&df);
         if access && !modify {
-            let _ = filetime::set_file_times(file, ttime, fmtime);
+            let _ = filetime::set_file_times(file, tatime, fmtime);
         } else if modify && !access {
-            let _ = filetime::set_file_times(file, fatime, ttime);
+            let _ = filetime::set_file_times(file, fatime, tmtime);
         } else {
-            let _ = filetime::set_file_times(file, ttime, ttime);
+            let _ = filetime::set_file_times(file, tatime, tmtime);
         }
         let _ = fs::remove_file(touchf);
     }
@@ -89,7 +94,6 @@ fn main() {
         } else if file.trim() == "-v" || file.trim() == "--version" {
             display_version();
         }
-        touch(&file, create, access, modify, rfile);
     } else if cli.get_num() > 2 {
         for (i, a) in cli.get_args().iter().enumerate() {
             match a.trim() {
@@ -101,8 +105,8 @@ fn main() {
                 _ => continue
             }
         }
-        touch(&file, create, access, modify, rfile);
     } else {
         display_error(&program, "missing file operand");
     }
+    touch(&program, &file, create, access, modify, rfile);
 }
