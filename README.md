@@ -1,6 +1,8 @@
 ### touch
 > :fu: Touch utility implementation.
 
+[![Build Status](https://travis-ci.org/stpettersens/touch.png?branch=master)](https://travis-ci.org/stpettersens/touch)
+
 ```
 Touch utility implementation.
 Copyright 2017 Sam Saint-Pettersen.
