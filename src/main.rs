@@ -1,5 +1,5 @@
 /*
-    touch utility implementation.
+    Touch utility implementation.
     Copyright 2017 Sam Saint-Pettersen.
 
     Released under the MIT License.
