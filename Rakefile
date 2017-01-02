@@ -35,4 +35,7 @@ task :test do
     sh "#{tp} --help"
     puts
     sh "#{tp} foo.txt"
+    if not OS.windows? then
+        sh "file foo.txt"
+    end
 end
