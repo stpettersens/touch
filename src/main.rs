@@ -7,8 +7,11 @@
 
 extern crate clioptions;
 extern crate filetime;
+extern crate time;
+extern crate regex;
 use clioptions::CliOptions;
 use filetime::FileTime;
+use regex::Regex;
 use std::fs;
 use std::fs::File;
 use std::path::Path;
@@ -34,20 +37,61 @@ fn display_help(program: &str) {
     println!("-c | --no-create: Do not create file if it does not exist.");
     println!("-a | --access: Change the access time only.");
     println!("-m | --modification: Change the modification time only.");
-    println!("-d | --date <iso8601>: Use ISO 8601 (e.g 2017-01-02T23:50:00).");
+    println!("-d | --date <iso8601>: Use ISO 8601 as UTC (e.g 2017-01-02T23:50:00).");
     println!("-u | --unix <timestamp>: Use Unix timestamp (e.g. 1483402603).");
     println!("-r | --reference <ref_file>: Use reference file's time instead of current time.");
     exit(0);
 }
 
-fn get_unix_time(timestamp: &str, unix: bool) -> u64 {
+fn parse_unit(unit: &str) -> i32 {
+    let n = unit.parse::<i32>().ok();
+    let unit = match n {
+        Some(unit) => unit as i32,
+        None => 0 as i32,
+    };
+    unit
+}
+
+fn get_unix_time(timestamp: &str, unix: bool) -> i64 {
     if !unix {
         // Parse something like 2016-10-12T14:00:34...
+        let p = Regex::new(r"^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})").unwrap();
+        if !p.is_match(timestamp) {
+            return -1;
+        }
+        let mut sec = 0 as i32;
+        let mut min = 0 as i32;
+        let mut hrs = 0 as i32;
+        let mut day = 0 as i32;
+        let mut mon = 0 as i32;
+        let mut yr = 0 as i32;
+        for cap in p.captures_iter(timestamp) {
+            sec = parse_unit(&cap[6]);
+            min = parse_unit(&cap[5]);
+            hrs = parse_unit(&cap[4]);
+            day = parse_unit(&cap[3]);
+            mon = parse_unit(&cap[2]);
+            yr = parse_unit(&cap[1]);
+        }
+        let date = time::Tm { 
+            tm_sec: sec,
+            tm_min: min,
+            tm_hour: hrs,
+            tm_mday: day,
+            tm_mon: mon - 1,
+            tm_year: yr - 1900,
+            tm_wday: 0,
+            tm_yday: 0,
+            tm_isdst: 0,
+            tm_utcoff: -3600, // UTC.
+            tm_nsec: 0,
+        };
+        return date.to_utc().to_timespec().sec as i64;
     }
-    let n = timestamp.parse::<u64>().ok();
+    let n = timestamp.parse::<i64>().ok();
     let timestamp = match n {
-        Some(timestamp) => timestamp as u64,
-        None => 0 as u64,
+        Some(timestamp) => timestamp as i64,
+        None => -1 as i64,
     };
     timestamp
 }
@@ -78,7 +122,16 @@ rfile: String, timestamp: String, unix: bool) {
             }
         }
         else if !timestamp.is_empty() {
-            tatime = FileTime::from_seconds_since_1970(get_unix_time(&timestamp, unix), 0);
+            let utime = get_unix_time(&timestamp, unix);
+            if utime == -1 {
+                let _ = fs::remove_file(touchf);
+                if !unix {
+                    display_error(&program, "not a valid ISO 8601 UTC timestamp");
+                } else {
+                    display_error(&program, "not a valid Unix timestamp");
+                }
+            }
+            tatime = FileTime::from_seconds_since_1970(utime as u64, 0);
             tmtime = tatime;
         }
         let fatime = FileTime::from_last_access_time(&df);
