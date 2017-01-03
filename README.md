@@ -16,8 +16,9 @@ Options:
 -c | --no-create: Do not create file if it does not exist.
 -a | --access: Change the access time only.
 -m | --modification: Change the modification time only.
--d | --date <iso8601>: Use ISO 8601 (e.g 2017-01-02T23:50:00).
--u | --unix <timestamp>: Use Unix timestamp (e.g. 1483402603).
+-d | --date <iso8601>: Use ISO 8601 (e.g 2017-01-02T23:50:00+00:00).
+-u | --unix <timestamp>: Use Unix timestamp (e.g. 1483402603).")
 -r | --reference <ref_file>: Use reference file's time instead of current time.
+-l | --log: Log used Unix timestamp to console for -d or -u option.
 
 ```
