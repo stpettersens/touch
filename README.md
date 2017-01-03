@@ -2,6 +2,7 @@
 > :fu: Touch utility implementation.
 
 [![Build Status](https://travis-ci.org/stpettersens/touch.png?branch=master)](https://travis-ci.org/stpettersens/touch)
+[![Build status](https://ci.appveyor.com/api/projects/status/4yvxt7dspywq341r?svg=true)](https://ci.appveyor.com/project/stpettersens/touch)
 
 ```
 Touch utility implementation.
