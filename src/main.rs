@@ -37,7 +37,7 @@ fn display_help(program: &str) {
     println!("-c | --no-create: Do not create file if it does not exist.");
     println!("-a | --access: Change the access time only.");
     println!("-m | --modification: Change the modification time only.");
-    println!("-d | --date <iso8601>: Use ISO 8601 (e.g 2017-01-02T23:50:00+00:00).");
+    println!("-d | --date <iso8601>: Use ISO 8601 timestamp (e.g 2017-01-02T23:50:00+00:00).");
     println!("-u | --unix <timestamp>: Use Unix timestamp (e.g. 1483402603).");
     println!("-r | --reference <ref_file>: Use reference file's time instead of current time.");
     println!("-l | --log: Log used Unix timestamp to console for -d or -u option.");
