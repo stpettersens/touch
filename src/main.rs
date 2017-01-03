@@ -77,7 +77,7 @@ rfile: String, timestamp: String, unix: bool) {
                 display_error(program, "cannot access reference file");
             }
         }
-        if !timestamp.is_empty() {
+        else if !timestamp.is_empty() {
             tatime = FileTime::from_seconds_since_1970(get_unix_time(&timestamp, unix), 0);
             tmtime = tatime;
         }
