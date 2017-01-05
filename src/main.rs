@@ -8,10 +8,10 @@
 extern crate clioptions;
 extern crate filetime;
 extern crate time;
-extern crate regex;
+extern crate litepattern;
 use clioptions::CliOptions;
 use filetime::FileTime;
-use regex::Regex;
+use litepattern::LPattern;
 use std::fs;
 use std::fs::File;
 use std::path::Path;
@@ -56,41 +56,19 @@ fn parse_unit(unit: &str) -> i32 {
 fn get_unix_time(timestamp: &str, unix: bool) -> i64 {
     if !unix {
         // Parse something like 2016-10-12T14:00:34...
-        let mut p = Regex::new(r"^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})").unwrap();
-        if !p.is_match(timestamp) {
-            return -1;
-        }
-        let mut sec = 0 as i32;
-        let mut min = 0 as i32;
-        let mut hrs = 0 as i32;
-        let mut day = 0 as i32;
-        let mut mon = 0 as i32;
-        let mut yr = 0 as i32;
-        for cap in p.captures_iter(timestamp) {
-            sec = parse_unit(&cap[6]);
-            min = parse_unit(&cap[5]);
-            hrs = parse_unit(&cap[4]);
-            day = parse_unit(&cap[3]);
-            mon = parse_unit(&cap[2]);
-            yr = parse_unit(&cap[1]);
-        }
-        let mut offset = 0 as i32; // UTC.
-        p = Regex::new(r"\+*-*(\d{2}):(\d{2})").unwrap();
-        for cap in p.captures_iter(timestamp) {
-            offset = parse_unit(&cap[1]) * 60 * 60;
-            offset = (offset + (parse_unit(&cap[2]) * 60)) * -1;
-        }
+        let p = LPattern::new("%dddd-%dd-%ddT%dd:%dd:%dd");
+        let caps = p.apply_to(timestamp);
         let date = time::Tm {
-            tm_sec: sec,
-            tm_min: min,
-            tm_hour: hrs,
-            tm_mday: day,
-            tm_mon: mon - 1,
-            tm_year: yr - 1900,
+            tm_sec: parse_unit(&caps[5][0..2]), //sec,
+            tm_min: parse_unit(&caps[4][0..2]), // min,
+            tm_hour: parse_unit(&caps[3][0..2]), //hrs,
+            tm_mday: parse_unit(&caps[2][0..2]), //day,
+            tm_mon: parse_unit(&caps[1][0..2]) - 1, //mon - 1,
+            tm_year: parse_unit(&caps[0][0..4]) - 1900, //yr - 1900,
             tm_wday: 0,
             tm_yday: 0,
             tm_isdst: 0,
-            tm_utcoff: offset,
+            tm_utcoff: 0, //offset,
             tm_nsec: 0,
         };
         return date.to_utc().to_timespec().sec as i64;
