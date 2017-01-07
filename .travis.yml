@@ -15,5 +15,4 @@ script:
     - rake test
     
 after_script:
-	- rake shouldfail
-
+    - rake shouldfail
