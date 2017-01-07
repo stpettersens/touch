@@ -36,11 +36,16 @@ task :test do
     puts
     sh "#{tp} foo.txt"
     puts
-    sh "#{tp} bar.txt -d invalid"
-    puts
     if not OS.windows? then
         sh "file foo.txt"
     else
         sh "dir"
     end
 end
+
+task :shouldfail do
+	sh "#{tp} bar.txt -d invalid"
+	puts
+	sh "#{tp} bar.txt -u invalid"
+end
+

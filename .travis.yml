@@ -13,3 +13,7 @@ before_install:
 script:
     - rake
     - rake test
+    
+after_script:
+	- rake shouldfail
+

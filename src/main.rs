@@ -58,21 +58,20 @@ fn get_unix_time(timestamp: &str, unix: bool) -> i64 {
         // Parse something like 2016-10-12T14:00:34...
         let p = LPattern::new("%dddd-%dd-%ddT%dd:%dd:%dd");
         let caps = p.apply_to(timestamp);
-        println!("{:?}", caps);
         if !p.is_match(caps.clone(), timestamp) {
             return -1 as i64;
         }
         let date = time::Tm {
-            tm_sec: parse_unit(&caps[5][0..2]), //sec,
-            tm_min: parse_unit(&caps[4][0..2]), // min,
-            tm_hour: parse_unit(&caps[3][0..2]), //hrs,
-            tm_mday: parse_unit(&caps[2][0..2]), //day,
-            tm_mon: parse_unit(&caps[1][0..2]) - 1, //mon - 1,
-            tm_year: parse_unit(&caps[0][0..4]) - 1900, //yr - 1900,
+            tm_sec: parse_unit(&caps[5][0..2]),
+            tm_min: parse_unit(&caps[4][0..2]),
+            tm_hour: parse_unit(&caps[3][0..2]),
+            tm_mday: parse_unit(&caps[2][0..2]),
+            tm_mon: parse_unit(&caps[1][0..2]) - 1,
+            tm_year: parse_unit(&caps[0][0..4]) - 1900,
             tm_wday: 0,
             tm_yday: 0,
             tm_isdst: 0,
-            tm_utcoff: 0, //offset,
+            tm_utcoff: 0,
             tm_nsec: 0,
         };
         return date.to_utc().to_timespec().sec as i64;
