@@ -44,8 +44,5 @@ task :test do
 end
 
 task :shouldfail do
-	sh "#{tp} bar.txt -d invalid"
-	puts
-	sh "#{tp} bar.txt -u invalid"
+    sh "#{tp} bar.txt -d invalid"
 end
-
