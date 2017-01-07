@@ -58,6 +58,10 @@ fn get_unix_time(timestamp: &str, unix: bool) -> i64 {
         // Parse something like 2016-10-12T14:00:34...
         let p = LPattern::new("%dddd-%dd-%ddT%dd:%dd:%dd");
         let caps = p.apply_to(timestamp);
+        println!("{:?}", caps);
+        if !p.is_match(caps.clone(), timestamp) {
+            return -1 as i64;
+        }
         let date = time::Tm {
             tm_sec: parse_unit(&caps[5][0..2]), //sec,
             tm_min: parse_unit(&caps[4][0..2]), // min,
@@ -72,7 +76,7 @@ fn get_unix_time(timestamp: &str, unix: bool) -> i64 {
             tm_nsec: 0,
         };
         return date.to_utc().to_timespec().sec as i64;
-    }
+    } 
     let n = timestamp.parse::<i64>().ok();
     let timestamp = match n {
         Some(timestamp) => timestamp as i64,

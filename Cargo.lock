@@ -38,7 +38,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 [[package]]
 name = "litepattern"
 version = "0.1.0"
-source = "git+https://github.com/stpettersens/litepattern.git#86fc2e3354bb7a84bdf1a5879fb0773b3530346a"
+source = "git+https://github.com/stpettersens/litepattern.git#e6c6f987c7e02ee93bd7372cc2299fd193c2b42b"
 
 [[package]]
 name = "time"
