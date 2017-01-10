@@ -1,4 +1,3 @@
-require 'fileutils'
 require 'os'
 
 target = "touch"
@@ -21,10 +20,7 @@ task :upx => [:default] do
 end
 
 task :clean do
-    FileUtils.rm_rf("target")
-    if File.exists?(tp) then
-        File.delete(tp)
-    end
+    sh "cargo clean" 
 end
 
 task :cleanlock do
