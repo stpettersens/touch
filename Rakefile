@@ -1,11 +1,11 @@
 require 'os'
 
 target = "touch"
-tp = "target/release/#{target}"
+tp = "target/release/touch"
 
 if OS.windows? then
-    target = "#{target}.exe"
-    tp = "target\\release\\#{target}"
+    target = "touch.exe"
+    tp = "target\\release\\touch.exe"
 end
 
 task :default do
